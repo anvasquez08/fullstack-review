@@ -37,3 +37,7 @@ let getReposByUsername = (username) => {
 
 module.exports.getReposByUsername = getReposByUsername;
 
+/*
+Ensure there are no duplicate repos. If you happen to import the same repo twice, 
+it should only show up once in your database. See the tips section about considering unique columns.
+*/

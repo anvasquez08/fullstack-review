@@ -11,28 +11,36 @@ app.use(express.static(__dirname + '/../client/dist'));
 
 app.post('/repos/:username', (req, res)  => {
 	let {username} = req.params;
-	git.getReposByUsername(username)
-  	.then(response => {
-  		console.log('back to server: sending this response to client', response)
-  		res.send(response)
-  	})
-	.catch(err => console.log(err))
+  db.retrieveByUsername(username)
+  .then(response => {
+    if(response.length === 0) {
+      git.getReposByUsername(username)
+       .then(response => {
+         res.send(response)
+       })
+      .catch(err => console.log(err))
+    } else {
+       res.send(response)
+    }
+  }) 
 });
 
 app.get('/repos', (req, res) => {
   	db.retrieve()
-  	.then(response => {
-  		console.log('back to server: sending repos to client')
-  		res.send(response)
-  	})
+  	.then(response => {res.send(response)})
   	.catch(err => console.log('error in saving'))
 });
 
-app.delete('/repos/:id', (req, res) => {
-	let {id} = req.params
+app.delete('/repos/:id/:username', (req, res) => {
+	let {id, username} = req.params
+
 	db.deleteRepoByID(id)
-	 	.then(response => res.send(response))
-  		.catch(err => console.log('error in saving'))
+	 	.then(response => {
+      console.log('deleted', response)
+      db.retrieveByUsername(username)
+      .then(response => res.send(response))
+    })
+  	.catch(err => console.log('error in saving'))
 })
 
 let port = 1128;

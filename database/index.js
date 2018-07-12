@@ -8,7 +8,10 @@ mongoose.connect('mongodb://localhost/fetcher');
 
 let repoSchema = mongoose.Schema({
   username: String, 
-  repo_name: String, 
+  repo_name: {
+    type: String,
+    unique : true
+  }, 
   repo_id: Number, 
   repo_url: String,
   repo_description: String,
@@ -28,6 +31,9 @@ let retrieve = () => {
 	return Repo.find({})
 }
 
+let retrieveByUsername = (username) => {
+  return Repo.find({username: username})
+}
 let deleteRepoByID = (id) => {
 	return Repo.deleteOne({repo_id: id})
 }
@@ -35,6 +41,7 @@ let deleteRepoByID = (id) => {
 
 exports.save = save;
 exports.retrieve = retrieve;
+exports.retrieveByUsername = retrieveByUsername;
 exports.deleteRepoByID = deleteRepoByID;
 
 /*
